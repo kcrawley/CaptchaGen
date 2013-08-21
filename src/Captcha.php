@@ -1,28 +1,22 @@
 <?php namespace CaptchaGen;
 
+use CaptchaGen\Interfaces\GeneratorInterface;
+
 class Captcha
 {
     private $config;
     private $generator;
     private $imaging;
 
-    public function __construct(array $config = array())
+    public function __construct(Config $config, Imaging $imaging, GeneratorInterface $generator)
     {
-        $this->config = new Config($config);
-        $this->imaging = new Imaging($this->config);
-        $this->generator = $this->initGenerator();
+        $this->config = $config;
+        $this->imaging = $imaging;
+        $this->generator = $generator;
     }
 
     public function generateCaptcha()
     {
         return $this->generator->build($this->config);
-    }
-
-    protected function initGenerator()
-    {
-        $config_mode = $this->config->getKey('mode');
-        $generators = $this->config->getKey('generators');
-
-        return new $generators[$config_mode]($this->config, $this->imaging);
     }
 }

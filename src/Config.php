@@ -52,12 +52,12 @@ class Config
     private $shadow;
 
     /**
-     * @var string utilized by the Captcha library to store the generated challenge
+     * @var string utilized by the Captcha library to process the generated challenge
      */
     private $challenge;
 
     /**
-     * @var string utilized by the Captcha library to store the generated response
+     * @var string utilized by the Captcha library to process the generated response
      * (only used in arithmetic mode)
      */
     private $response;
@@ -103,7 +103,7 @@ class Config
     {
         if (property_exists($this, $key)) {
             $this->$key = $value;
-            $this->restrictParams();
+            $this->validateParams();
         }
     }
 
