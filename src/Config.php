@@ -126,13 +126,13 @@ class Config
     /**
      * Used by the constructor to set up default configuration data.
      */
-    protected function setDefaults()
+    protected function setDefaults($override = false)
     {
-        if (is_null($this->defaultSet)) {
+        if ($override OR is_null($this->defaultSet)) {
             $this->mode         = 'random'; // valid modes are arithmetic, alphanum, and random
             $this->length       = array('min' => 5, 'max' => 5);
-            $this->background   = array('default.png');
-            $this->font         = array('times.ttf');
+            $this->background   = array('lib/images/default.png');
+            $this->font         = array('lib/fonts/times.ttf');
             $this->font_size    = array('min' => 24, 'max' => 30);
             $this->colors       = array('#000', '#3CB');
             $this->angle        = array('min' => 0, 'max' => 15);
@@ -148,37 +148,47 @@ class Config
     protected function validateParams($override = false)
     {
         if ($override OR is_null($this->configValidated)) {
+
+            srand(microtime() * 100);
+
             if ( $this->length['min'] < 1 ) {
                 $this->length['min'] = 1;
             }
 
-            if ( $this->angle['min'] < 0 ) {
-                $this->angle['min'] = 0;
+            if (is_array($this->angle)) {
+                if ( $this->angle['min'] < 0 ) {
+                    $this->angle['min'] = 0;
+                }
+
+                if ( $this->angle['max'] > 10) {
+                    $this->angle['max'] = 10;
+                }
+
+                if ( $this->angle['max'] < $this->angle['min'] ) {
+                    $this->angle['max'] = $this->angle['min'];
+                }
+
+                $this->angle = rand( $this->angle['min'], $this->angle['max'] ) * (rand(0, 1) == 1 ? -1 : 1);
             }
 
-            if ( $this->angle['max'] > 10) {
-                $this->angle['max'] = 10;
+            if (is_array($this->font_size)) {
+                if ( $this->font_size['min'] < 10 ) {
+                    $this->font_size['min'] = 10;
+                }
+
+                if ( $this->font_size['max'] < $this->font_size['min'] ) {
+                    $this->font_size['max'] = $this->font_size['min'];
+                }
+
+                $this->font_size = rand($this->font_size['min'], $this->font_size['max']);
             }
 
-            if ( $this->angle['max'] < $this->angle['min'] ) {
-                $this->angle['max'] = $this->angle['min'];
-            }
-
-            if ( $this->font_size['min'] < 10 ) {
-                $this->font_size['min'] = 10;
-            }
-
-            if ( $this->font_size['max'] < $this->font_size['min'] ) {
-                $this->font_size['max'] = $this->font_size['min'];
-            }
 
             if ( in_array($this->mode, $this->valid_modes) === false ) {
                 $this->mode = 'random';
             }
 
             // we will now choose random items if applicable
-
-            srand(microtime() * 100);
 
             if ( strpos($this->mode, 'random') === 0 ) {
                 $rand_key = array_rand($this->generators);

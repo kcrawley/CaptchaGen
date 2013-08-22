@@ -2,12 +2,10 @@
 
 use CaptchaGen\Interfaces\GeneratorInterface;
 
-class AlphaNumGenerator implements GeneratorInterface
+class AlphaNumGenerator extends Generator implements GeneratorInterface
 {
     private $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     private $length;
-    private $config;
-    private $imaging;
     private $challenge = '';
 
     public function __construct(Config $config, Imaging $imaging) {
@@ -24,11 +22,9 @@ class AlphaNumGenerator implements GeneratorInterface
             $this->challenge .= substr($this->characters, rand() % (strlen($this->characters)), 1);
         }
 
-        $this->config->setKey('challege', $this->challenge);
+        $this->config->setKey('challenge', $this->challenge);
+        $this->config->setKey('response', $this->challenge);
 
-        return array(
-            'captcha'   =>  $this->challenge,
-            'image'     =>  $this->imaging->generate()
-        );
+        return $this->captchaData();
     }
 }

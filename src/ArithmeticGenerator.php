@@ -2,10 +2,10 @@
 
 use CaptchaGen\Interfaces\GeneratorInterface;
 
-class ArithmeticGenerator implements GeneratorInterface
+class ArithmeticGenerator extends Generator implements GeneratorInterface
 {
-    private $config;
-    private $imaging;
+    private $challenge;
+    private $response;
 
     public function __construct(Config $config, Imaging $imaging)
     {
@@ -19,14 +19,16 @@ class ArithmeticGenerator implements GeneratorInterface
         $int_b = rand(1,9);
 
         if ($int_a >= $int_b) {
-            $challenge = $int_a.' - '.$int_b.' = x';
-            $response = $int_a - $int_b;
+            $this->challenge = $int_a.' - '.$int_b.' = x';
+            $this->response = $int_a - $int_b;
         } else {
-            $challenge = $int_a.' + '.$int_b.' = x';
-            $response = $int_a + $int_b;
+            $this->challenge = $int_a.' + '.$int_b.' = x';
+            $this->response = $int_a + $int_b;
         }
 
-        $this->config->setKey('challenge', $challenge);
-        $this->config->setKey('response', $response);
+        $this->config->setKey('challenge', $this->challenge);
+        $this->config->setKey('response', $this->response);
+
+        return $this->captchaData();
     }
 }
