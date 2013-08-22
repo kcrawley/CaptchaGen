@@ -9,4 +9,6 @@ include('src/Config.php');
 
 $captcha = new \CaptchaGen\CaptchaFactory();
 
-var_dump($captcha->getInstance());
+$captcha = $captcha->getInstance();
+$captcha->generateCaptcha();
+var_dump($captcha);
